@@ -1,0 +1,209 @@
+{
+  "scheduler": "kubegpu",
+  "benchmarkTime": "2026-06-24T08:00:16.152496+00:00",
+  "jobCount": 24,
+  "overallStats": {
+    "count": 24,
+    "success": 12,
+    "successRate": 50.0,
+    "p50": 48.981,
+    "p95": 50.539,
+    "p99": 50.539,
+    "min": 44.3,
+    "max": 50.539,
+    "mean": 48.337
+  },
+  "statsByType": {
+    "small": {
+      "count": 12,
+      "success": 12,
+      "successRate": 100.0,
+      "p50": 48.981,
+      "p95": 50.539,
+      "p99": 50.539,
+      "min": 44.3,
+      "max": 50.539,
+      "mean": 48.337
+    },
+    "large": {
+      "count": 3,
+      "success": 0,
+      "successRate": 0.0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "min": null,
+      "max": null,
+      "mean": null
+    },
+    "medium": {
+      "count": 9,
+      "success": 0,
+      "successRate": 0.0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "min": null,
+      "max": null,
+      "mean": null
+    }
+  },
+  "rawResults": [
+    {
+      "jobName": "small-kubegpu-002",
+      "gangSize": 1,
+      "latencySeconds": 45.866,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-010",
+      "gangSize": 1,
+      "latencySeconds": 44.3,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-001",
+      "gangSize": 1,
+      "latencySeconds": 48.201,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-011",
+      "gangSize": 1,
+      "latencySeconds": 46.157,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-000",
+      "gangSize": 1,
+      "latencySeconds": 50.539,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-003",
+      "gangSize": 1,
+      "latencySeconds": 49.887,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-004",
+      "gangSize": 1,
+      "latencySeconds": 49.678,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-005",
+      "gangSize": 1,
+      "latencySeconds": 49.477,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-006",
+      "gangSize": 1,
+      "latencySeconds": 49.279,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-007",
+      "gangSize": 1,
+      "latencySeconds": 49.077,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-008",
+      "gangSize": 1,
+      "latencySeconds": 48.886,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-kubegpu-009",
+      "gangSize": 1,
+      "latencySeconds": 48.696,
+      "status": "Running"
+    },
+    {
+      "jobName": "large-kubegpu-021",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 132.869
+    },
+    {
+      "jobName": "large-kubegpu-022",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 132.629
+    },
+    {
+      "jobName": "large-kubegpu-023",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 132.404
+    },
+    {
+      "jobName": "medium-kubegpu-012",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 132.139
+    },
+    {
+      "jobName": "medium-kubegpu-013",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.893
+    },
+    {
+      "jobName": "medium-kubegpu-014",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.651
+    },
+    {
+      "jobName": "medium-kubegpu-015",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.392
+    },
+    {
+      "jobName": "medium-kubegpu-016",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.052
+    },
+    {
+      "jobName": "medium-kubegpu-017",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.831
+    },
+    {
+      "jobName": "medium-kubegpu-018",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.628
+    },
+    {
+      "jobName": "medium-kubegpu-019",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.428
+    },
+    {
+      "jobName": "medium-kubegpu-020",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.223
+    }
+  ]
+}

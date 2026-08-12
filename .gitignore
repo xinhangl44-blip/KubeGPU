@@ -1,8 +1,5 @@
 # 编译产物
 bin/
-my-kube-scheduler
-my-scheduler
-simulator
 main
 
 # 运行产物
@@ -17,4 +14,4 @@ cover.out
 jobs/
 
 # benchmark 结果（可选，如果想保留删掉这行）
-results/
+

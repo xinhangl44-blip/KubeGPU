@@ -1,0 +1,207 @@
+{
+  "scheduler": "default",
+  "benchmarkTime": "2026-06-24T08:02:37.072755+00:00",
+  "jobCount": 24,
+  "overallStats": {
+    "count": 24,
+    "success": 14,
+    "successRate": 58.3,
+    "p50": 58.358,
+    "p95": 89.952,
+    "p99": 89.952,
+    "min": 55.183,
+    "max": 89.952,
+    "mean": 60.77
+  },
+  "statsByType": {
+    "small": {
+      "count": 12,
+      "success": 12,
+      "successRate": 100.0,
+      "p50": 57.953,
+      "p95": 65.472,
+      "p99": 65.472,
+      "min": 55.183,
+      "max": 65.472,
+      "mean": 58.35
+    },
+    "medium": {
+      "count": 9,
+      "success": 2,
+      "successRate": 22.2,
+      "p50": 75.29,
+      "p95": 89.952,
+      "p99": 89.952,
+      "min": 60.629,
+      "max": 89.952,
+      "mean": 75.29
+    },
+    "large": {
+      "count": 3,
+      "success": 0,
+      "successRate": 0.0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "min": null,
+      "max": null,
+      "mean": null
+    }
+  },
+  "rawResults": [
+    {
+      "jobName": "small-default-005",
+      "gangSize": 1,
+      "latencySeconds": 55.183,
+      "status": "Running"
+    },
+    {
+      "jobName": "medium-default-012",
+      "gangSize": 2,
+      "latencySeconds": 60.629,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-000",
+      "gangSize": 1,
+      "latencySeconds": 58.946,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-001",
+      "gangSize": 1,
+      "latencySeconds": 58.728,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-002",
+      "gangSize": 1,
+      "latencySeconds": 58.551,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-004",
+      "gangSize": 1,
+      "latencySeconds": 58.164,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-006",
+      "gangSize": 1,
+      "latencySeconds": 57.741,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-008",
+      "gangSize": 1,
+      "latencySeconds": 57.247,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-009",
+      "gangSize": 1,
+      "latencySeconds": 57.066,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-010",
+      "gangSize": 1,
+      "latencySeconds": 56.86,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-011",
+      "gangSize": 1,
+      "latencySeconds": 56.655,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-007",
+      "gangSize": 1,
+      "latencySeconds": 59.592,
+      "status": "Running"
+    },
+    {
+      "jobName": "small-default-003",
+      "gangSize": 1,
+      "latencySeconds": 65.472,
+      "status": "Running"
+    },
+    {
+      "jobName": "medium-default-013",
+      "gangSize": 2,
+      "latencySeconds": 89.952,
+      "status": "Running"
+    },
+    {
+      "jobName": "large-default-021",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 132.194
+    },
+    {
+      "jobName": "large-default-022",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.984
+    },
+    {
+      "jobName": "large-default-023",
+      "gangSize": 3,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.776
+    },
+    {
+      "jobName": "medium-default-014",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.242
+    },
+    {
+      "jobName": "medium-default-015",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 131.049
+    },
+    {
+      "jobName": "medium-default-016",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.846
+    },
+    {
+      "jobName": "medium-default-017",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.659
+    },
+    {
+      "jobName": "medium-default-018",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.478
+    },
+    {
+      "jobName": "medium-default-019",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.29
+    },
+    {
+      "jobName": "medium-default-020",
+      "gangSize": 2,
+      "latencySeconds": null,
+      "status": "Timeout",
+      "elapsedSeconds": 130.066
+    }
+  ]
+}
