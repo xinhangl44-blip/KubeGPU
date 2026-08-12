@@ -1,0 +1,20 @@
+# 编译产物
+bin/
+my-kube-scheduler
+my-scheduler
+simulator
+main
+
+# 运行产物
+scheduler.log
+cover.out
+*.log
+
+# 备份
+*.backup
+
+# 临时生成的 job YAML
+jobs/
+
+# benchmark 结果（可选，如果想保留删掉这行）
+results/

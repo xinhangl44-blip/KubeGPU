@@ -1,0 +1,31 @@
+# PriorityClass 是集群级资源，需要在创建任何 GPUJob 之前先 apply。
+# 这里定义的 value 要和测试 YAML 里 spec.priority 用到的数字对齐：
+#   10  -> bad-low-priority (场景 2a)
+#   50  -> bad-vram-oversized / bad-never-assembles / job-stale-first / job-fresh-second
+#   100 -> good-high-priority / good-resnet-job
+#
+# 注意：K8s 不允许在 Pod spec 里直接写整数 priority，必须通过
+# PriorityClassName 引用这里定义的对象，由 admission controller 自动填值。
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: gpujob-priority-low
+value: 10
+globalDefault: false
+description: "Low priority GPU job, used for deadlock-eviction victim testing"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: gpujob-priority-medium
+value: 50
+globalDefault: false
+description: "Medium priority GPU job, default tier for most test scenarios"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: gpujob-priority-high
+value: 100
+globalDefault: false
+description: "High priority GPU job, should survive deadlock eviction over lower-priority competitors"

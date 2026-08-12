@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- scheduler_v1alpha1_gpujob.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

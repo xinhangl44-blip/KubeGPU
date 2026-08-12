@@ -1,0 +1,21 @@
+apiVersion: scheduler.lawson.com/v1alpha1
+kind: GPUJob
+metadata:
+  name: bad-low-priority
+  namespace: default
+spec:
+  gangSize: 2
+  gpuCount: 2
+  priority: 100       # 🌟 恢复低优先级 (Victim)
+  vramPerGPU: "15Gi"
+---
+apiVersion: scheduler.lawson.com/v1alpha1
+kind: GPUJob
+metadata:
+  name: good-high-priority
+  namespace: default
+spec:
+  gangSize: 2
+  gpuCount: 2
+  priority: 100      # 🌟 恢复高优先级 (Survivor)
+  vramPerGPU: "15Gi"

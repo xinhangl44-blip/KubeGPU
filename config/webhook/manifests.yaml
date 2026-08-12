@@ -1,0 +1,26 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-scheduler-lawson-com-v1alpha1-gpujob
+  failurePolicy: Fail
+  name: vgpujob.kb.io
+  rules:
+  - apiGroups:
+    - scheduler.lawson.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - gpujobs
+  sideEffects: None

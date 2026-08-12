@@ -1,0 +1,27 @@
+# permissions for end users to edit gpujobs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: gpu-crd
+    app.kubernetes.io/managed-by: kustomize
+  name: gpujob-editor-role
+rules:
+- apiGroups:
+  - scheduler.lawson.com
+  resources:
+  - gpujobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - scheduler.lawson.com
+  resources:
+  - gpujobs/status
+  verbs:
+  - get

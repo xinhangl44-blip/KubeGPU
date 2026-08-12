@@ -1,0 +1,9 @@
+apiVersion: scheduler.lawson.com/v1alpha1
+kind: GPUJob
+metadata:
+  labels:
+    app.kubernetes.io/name: gpu-crd
+    app.kubernetes.io/managed-by: kustomize
+  name: gpujob-sample
+spec:
+  # TODO(user): Add fields here

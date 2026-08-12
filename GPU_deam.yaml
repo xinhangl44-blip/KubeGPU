@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: gpu-usage-exporter
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: gpu-usage-exporter
+  template:
+    metadata:
+      labels:
+        app: gpu-usage-exporter
+    spec:
+      serviceAccountName: gpu-usage-exporter
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      containers:
+        - name: exporter
+          image: kubegpu/gpu-usage-exporter:dev
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            privileged: false
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gpu-usage-exporter
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gpu-usage-exporter
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gpu-usage-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gpu-usage-exporter
+subjects:
+  - kind: ServiceAccount
+    name: gpu-usage-exporter
+    namespace: kube-system
