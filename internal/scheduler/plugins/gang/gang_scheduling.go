@@ -61,7 +61,6 @@ type GangScheduling struct {
 	handle        framework.Handle
 	mu            sync.Mutex
 	state         map[string]*gangState
-	// 顺应 v1.32.3 规范：移除方括号，使用标准的 DelayingInterface
 	deadlockQueue workqueue.DelayingInterface
 }
 
@@ -81,7 +80,6 @@ func New(ctx context.Context, obj runtime.Object, h framework.Handle) (framework
 	gs := &GangScheduling{
 		handle:        h,
 		state:         make(map[string]*gangState),
-		// 顺应 v1.32.3 规范：使用原生的初始化函数
 		deadlockQueue: workqueue.NewDelayingQueue(),
 	}
 	gs.StartDeadlockWorker(ctx)
@@ -289,7 +287,6 @@ func (gs *GangScheduling) StartDeadlockWorker(ctx context.Context) {
 			if shutdown {
 				return
 			}
-			// 因为底层返回的是 interface{}，我们通过类型断言转回 string 即可
 			if job, ok := item.(string); ok {
 				gs.reconcileDeadlock(job)
 			}
