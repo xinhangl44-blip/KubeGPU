@@ -2,7 +2,7 @@
 
 A Kubernetes Scheduler Framework plugin for GPU workloads. Extends the default scheduler with VRAM-aware bin-packing, gang scheduling, deadlock detection, and KV cache-aware inference routing.
 
-Built as a learning project during Y1 at NUS CEG, deployed on k3s + WSL2 with RTX 5060 Ti.
+Built during Y1 at NUS CEG, deployed on k3s + WSL2 with RTX 5060 Ti.
 
 ---
 
@@ -10,14 +10,14 @@ Built as a learning project during Y1 at NUS CEG, deployed on k3s + WSL2 with RT
 
 | Feature | Description |
 |---|---|
-| **VRAM-aware Filter** | Reads per-GPU VRAM from node annotation, rejects nodes where no single card has enough free VRAM |
+| **VRAM-aware Filter** | Reads per-GPU VRAM from node annotation; rejects nodes where no single card has enough free VRAM |
 | **Best-fit GPU selection** | Reserve picks the GPU with least post-allocation free VRAM, reducing fragmentation |
 | **Gang scheduling** | All-or-nothing: all Pods in a GPUJob must be placed before any can start |
 | **Deadlock detection** | Background worker evicts the lowest-priority waiting gang when multiple jobs are mutually stuck |
 | **Priority + FIFO ordering** | Higher priority scheduled first; ties broken by submission time |
 | **KV cache-aware Score** | Routes inference Pods to nodes with higher vLLM prefix cache hit rate |
 | **GPU usage exporter** | DaemonSet scrapes `nvidia-smi` every 5s and patches `UsedVRAM` into node annotation |
-| **Dry-run Simulator** | CLI that predicts scheduling outcomes by reading real cluster state, without modifying anything |
+| **Dry-run Simulator** | Reads real cluster state, predicts scheduling outcomes without modifying anything |
 
 ---
 
@@ -84,7 +84,7 @@ kubectl apply -f priority_class.yaml
 ### 2. Annotate GPU nodes with hardware topology
 
 ```bash
-# Get your GPU UUID first
+# Get your GPU UUID
 nvidia-smi --query-gpu=uuid --format=csv,noheader
 
 # Annotate the node (replace values with your actual hardware)
@@ -112,7 +112,7 @@ kubectl apply -f GPU_deam.yaml
 ### 5. Run the controller
 
 ```bash
-go run main.go
+go run cmd/main.go
 ```
 
 ### 6. Submit a GPUJob
@@ -143,7 +143,7 @@ spec:
 
 ### Per-GPU VRAM tracking instead of node-level totals
 
-The default scheduler only understands node-level resources. Two Pods scheduled to the same node might both pass based on total VRAM, but if each needs a card with 16 GiB and the node has two 8 GiB cards, neither actually fits. VRAMFit Filter checks per-card free VRAM independently.
+The default scheduler only understands node-level resources. Two Pods scheduled to the same node might both pass based on total VRAM, but if each needs a card with 16 GiB and the node has two 8 GiB cards, neither actually fits. VRAMFit Filter checks per-card free VRAM independently and uses best-fit selection to reduce fragmentation.
 
 ### In-memory Reserve ledger instead of relying on `nodeInfo.Requested()`
 
@@ -151,7 +151,7 @@ The default scheduler only understands node-level resources. Two Pods scheduled 
 
 ### Gang scheduling deadlock detection is heuristic, not graph-based
 
-The detector uses a timer-based heuristic: if 2+ gangs have been waiting longer than 10 seconds simultaneously, the lowest-priority one is evicted. This is not a strict wait-for-graph cycle detector. False positives are acceptable at this cluster scale given the implementation simplicity.
+The detector uses a workqueue-based approach: when a gang first enters Permit waiting, it is enqueued with a 10-second delay. On expiry, if 2+ gangs are still mutually stuck, the lowest-priority one is evicted. This is not a strict wait-for-graph cycle detector — false positives are acceptable at this cluster scale.
 
 ### KV cache score weight
 
@@ -163,7 +163,7 @@ KV cache hit rate contributes 30% of the Score (`KVCacheWeight = 0.3`), NVLink t
 
 **Environment**: single-node k3s on WSL2, RTX 5060 Ti (20 GiB VRAM)
 
-**Workload**: 24 concurrent GPUJobs
+**Workload**: 24 concurrent GPUJobs across 3 priority tiers
 
 | Type | Count | gangSize | vramPerGPU | Priority |
 |------|-------|----------|------------|----------|
@@ -175,17 +175,32 @@ KV cache hit rate contributes 30% of the Score (`KVCacheWeight = 0.3`), NVLink t
 
 | Metric | KubeGPU | Default Scheduler |
 |--------|---------|-------------------|
-| Overall success rate | **79.2%** | 79.2% |
-| medium P50 latency | **11.1s** | 24.1s |
+| Overall success rate | 79.2% | 79.2% |
+| **medium P50 latency** | **11.1s** | **24.1s** |
 | medium P95 latency | 127.1s | 91.4s |
 | small success rate | 100% | 100% |
 | large success rate | 0% | 0% |
 
 **Medium-type gang jobs are scheduled 2.2× faster at P50** (11.1s vs 24.1s). These are gangSize=2 workloads — exactly the scenario this scheduler is designed for. VRAM-aware best-fit selection finds the right card faster than the default scheduler's approach.
 
-Large jobs failed on both schedulers due to insufficient remaining VRAM after small and medium jobs were placed — a capacity constraint, not a scheduler bug.
+Large jobs failed on both schedulers due to insufficient remaining VRAM after small and medium jobs were placed — a capacity constraint of the single-node test environment, not a scheduler bug.
 
-The default scheduler does not understand `custom.com/vram`. It succeeds on some jobs by coincidence rather than design. In a multi-node cluster with heterogeneous GPU sizes, this would produce OOM kills rather than scheduling failures.
+The default scheduler does not understand `custom.com/vram`. It schedules some jobs by coincidence rather than by design. In a multi-node cluster with heterogeneous GPU sizes, this would produce OOM kills rather than clean scheduling failures.
+
+### Running the benchmark yourself
+
+```bash
+# Generate job YAMLs
+python3 generate_jobs.py --scheduler kubegpu --count 24 --out jobs/kubegpu/
+python3 generate_jobs.py --scheduler default --count 24 --out jobs/default/
+
+# Run benchmark (run one at a time, wait for cluster to clear between runs)
+python3 benchmark.py run --jobs-dir jobs/kubegpu/ --scheduler kubegpu --out results/kubegpu.json
+python3 benchmark.py run --jobs-dir jobs/default/ --scheduler default --out results/default.json
+
+# Compare
+python3 benchmark.py compare results/kubegpu.json results/default.json
+```
 
 ---
 
@@ -195,6 +210,7 @@ Predict scheduling outcomes without submitting anything:
 
 ```bash
 go run cmd/simulator/main.go --namespace default --out simulation.json
+cat simulation.json | jq '.results[] | {job: .jobName, outcome: .outcome}'
 ```
 
 Sample output:
@@ -226,8 +242,8 @@ Sample output:
 
 ## Known Limitations
 
-- **Single-node tested only**: validated on a single-node k3s setup. Multi-node NVLink topology scoring is implemented but untested against real NVLink hardware.
-- **`UsedVRAM` eventual consistency**: GPU usage exporter patches annotations every 5 seconds. Rapid Pod churn can cause a stale window. The `pendingVRAM` ledger covers new reservations but evicted Pods' released VRAM may take up to 5 seconds to reflect.
+- **Single-node tested only**: validated on a single-node k3s setup. Multi-node NVLink topology scoring is implemented but not tested against real NVLink hardware.
+- **`UsedVRAM` eventual consistency**: GPU usage exporter patches annotations every 5 seconds. The `pendingVRAM` ledger covers new reservations, but evicted Pods' released VRAM may take up to 5 seconds to reflect.
 - **No running-pod preemption**: deadlock detection only evicts Pods still in the Permit waiting stage. There is no implementation that deletes a running low-priority Pod to free VRAM for a higher-priority one.
 - **Hardcoded priority tiers**: three fixed PriorityClass objects (10/50/100). Adding new tiers requires code changes.
 - **Sidecar containers**: init containers with `restartPolicy=Always` (K8s 1.29+ sidecar semantics) are treated as regular init containers, slightly under-estimating their VRAM contribution.
@@ -238,24 +254,30 @@ Sample output:
 
 ```
 .
-├── api/v1alpha1/          # GPUJob CRD types
+├── api/v1alpha1/                        # GPUJob CRD types and webhook
 ├── cmd/
-│   └── gpu-scheduler/     # Scheduler binary entry point
+│   ├── gpu-scheduler/                   # Scheduler binary entry point
+│   ├── simulator/                       # Dry-run simulator CLI
+│   └── main.go                          # Controller entry point
 ├── config/
-│   ├── crd/               # CRD manifests
-│   ├── rbac/              # ServiceAccount, ClusterRole, ClusterRoleBinding
-│   └── samples/           # Example GPUJob YAMLs
+│   ├── crd/                             # CRD manifests (generated)
+│   ├── rbac/                            # ServiceAccount, ClusterRole, ClusterRoleBinding
+│   └── samples/                         # Example GPUJob YAMLs
 ├── internal/
-│   └── controller/        # GPUJob reconcile loop
-├── pkg/
-│   └── plugins/
-│       ├── gang/          # Gang scheduling: PreFilter, Permit, PostFilter
-│       └── vramfit/       # VRAM filter, Reserve ledger, Score
-├── benchmark.py           # Benchmark tool
-├── generate_jobs.py       # GPUJob batch generator
-├── GPU_deam.yaml          # gpu-usage-exporter DaemonSet
-├── gpu-scheduler-config.yaml
-└── priority_class.yaml
+│   ├── controller/
+│   │   └── gpujob_controller.go         # GPUJob reconcile loop
+│   └── scheduler/plugins/
+│       ├── gang/
+│       │   └── gang_scheduling.go       # Gang scheduling: PreFilter, Permit, PostFilter
+│       └── vramfit/
+│           └── filter.go                # VRAM filter, Reserve ledger, Score
+├── simulator/
+│   └── simulator.go                     # Dry-run scheduling engine (library)
+├── benchmark.py                         # Benchmark tool
+├── generate_jobs.py                     # GPUJob batch generator
+├── GPU_deam.yaml                        # gpu-usage-exporter DaemonSet
+├── gpu-scheduler-config.yaml            # Scheduler plugin configuration
+└── priority_class.yaml                  # PriorityClass definitions (10/50/100)
 ```
 
 ---
